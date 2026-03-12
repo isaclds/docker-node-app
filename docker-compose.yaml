@@ -14,12 +14,19 @@ services:
       - private_network
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
 
   app:
     build: .
     container_name: app
     environment:
       DB_HOST: db
+      APP_PORT: ${APP_PORT}
       DB_PORT: ${POSTGRES_PORT}
       DB_NAME: ${POSTGRES_DB}
       DB_USER: ${POSTGRES_USER}
@@ -30,23 +37,45 @@ services:
     networks:
       - public_network
       - private_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${APP_PORT}/"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
 
-volumes:
-  postgres_data:
-    name: postgres_data
+  nginx:
+    image: nginx:1.24-alpine
+    container_name: engine-x
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      - APP_PORT=${APP_PORT}
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      app:
+        condition: healthcheck
+    networks:
+      - public_network
 
 networks:
   #two networks for security
   public_network:
     name: nginx-app
-    driver: brigde
+    driver: bridge
     ipam:
       config:
-        -subnet: 172.20.0.0/24
+        - subnet: 172.20.0.0/24
   private_network:
     name: app-db
     driver: bridge
     internal: true
     ipam:
       config:
-        -subnet: 172.21.0.0/24
+        - subnet: 172.21.0.0/24
+
+volumes:
+  postgres_data:
+    name: postgres_data
