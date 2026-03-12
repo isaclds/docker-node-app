@@ -1,1 +1,3 @@
-import { posts } from "../models/Posts.js";
+import PostRepository from "../repositories/PostRepository.js";
+
+export default "teste";

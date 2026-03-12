@@ -1,4 +1,4 @@
-import {} from "postsService.js";
+import postsService from "../services/postsService.js";
 
 function createPost(req, res) {
   try {

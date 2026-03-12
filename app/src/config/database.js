@@ -6,7 +6,7 @@ export default new Sequelize(
   process.env.POSTGRES_PASSWORD,
   {
     host: process.env.POSTGRES_HOST,
-    port: process.env.DB_PORT || 5432,
+    port: process.env.POSTGRES_PORT || 5432,
     dialect: "postgres",
     logging: false, // set to console.log to see SQL queries
     pool: {
