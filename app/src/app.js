@@ -1,16 +1,13 @@
 import express from "express";
-import conectadaDatabase from "./config/dbConnect.js";
 import routes from "./routes/index.js";
+import { testDbConnect } from "./config/database.js";
 
-const pool = await conectadaDatabase();
+const dbConectado = await testDbConnect();
 
-pool.on("error", (err, client) => {
-  console.error("Erro no cliente", err.message, err.stack);
-});
-
-pool.once("connect", (client) => {
-  console.log("Novo cliente criado e conectado: ", client);
-});
+if (!dbConectado) {
+  console.error("Exiting due to database failure!");
+  process.exit(1);
+}
 
 const app = express();
 routes(app);
