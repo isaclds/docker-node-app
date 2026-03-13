@@ -1,16 +1,14 @@
 services:
   db:
-    image: postgres:17
+    image: postgres:17-alpine
     container_name: postgres_db
     shm_size: 128mb
+    env_file:
+      - .env
     environment:
-      POSTGRES_HOST: ${POSTGRES_HOST}
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_HOST_AUTH_METHOD: scram-sha-256
-      TZ: ${TZ}
-      PGTZ: ${PGTZ}
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
     networks:
       - private_network
     volumes:
@@ -26,13 +24,10 @@ services:
   app:
     build: .
     container_name: app
+    env_file:
+      - .env
     environment:
-      POSTGRES_HOST: ${POSTGRES_HOST}
-      POSTGRES_PORT: ${POSTGRES_PORT}
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      APP_PORT: ${APP_PORT}
+      POSTGRES_HOST: db # nome serviço postgres
     depends_on:
       db:
         condition: service_healthy
@@ -40,7 +35,15 @@ services:
       - public_network
       - private_network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${APP_PORT}/"]
+      test:
+        [
+          "CMD",
+          "curl",
+          "-H",
+          "x-api-key: ${APP_KEY}",
+          "-f",
+          "http://localhost:${APP_PORT}/",
+        ]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -50,10 +53,8 @@ services:
     image: nginx:1.24-alpine
     container_name: engine-x
     ports:
-      - 80:80
-      - 443:443
-    environment:
-      - APP_PORT=${APP_PORT}
+      - 8080:80
+      # - 50443:443
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
@@ -63,21 +64,9 @@ services:
       - public_network
 
 networks:
-  #two networks for security
   public_network:
-    name: nginx-app
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.20.0.0/24
   private_network:
-    name: app-db
-    driver: bridge
     internal: true
-    ipam:
-      config:
-        - subnet: 172.21.0.0/24
 
 volumes:
   postgres_data:
-    name: postgres_data
