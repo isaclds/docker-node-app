@@ -1,16 +1,16 @@
-import postsService from "../services/postsService.js";
+import { getPostById } from "../services/postsService.js";
 
-function createPost(req, res) {
+async function createPost(req, res) {
   try {
   } catch {}
 }
 
-function listAllPosts(req, res) {
+async function listAllPosts(req, res) {
   try {
   } catch {}
 }
 
-function listOnePost(req, res) {
+async function listOnePost(req, res) {
   try {
   } catch {}
 }

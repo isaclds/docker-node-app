@@ -1,10 +1,9 @@
-import { listOnePost } from "../controllers/postsController.js";
 import PostRepository from "../repositories/PostRepository.js";
 import AppError from "../errors/AppError.js";
-import criarResposta from "utils/criarResposta.js";
-import logger from "utils/logger.js";
+import criarResposta from "../utils/criarResposta.js";
+import { logger } from "../utils/logger.js";
 
-async function listOnePost(req) {
+async function getPostById(req) {
   try {
     const id = req?.params?.postId;
     if (!id) throw new AppError("Post ID is required", 400);
@@ -26,4 +25,4 @@ async function listOnePost(req) {
   }
 }
 
-export default "teste";
+export { getPostById };

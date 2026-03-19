@@ -14,6 +14,11 @@ try {
 
 const app = express();
 
+app.get("/health", (req, res) => {
+  res.status(200).json({ success: true });
+});
+
+// Midleware to validate token
 app.use(function (req, res, next) {
   console.log("---HEADERS---");
   const headers = req.headers;

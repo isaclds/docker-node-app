@@ -12,6 +12,7 @@ services:
     networks:
       - private_network
     volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql # runs once
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test:
@@ -35,15 +36,7 @@ services:
       - public_network
       - private_network
     healthcheck:
-      test:
-        [
-          "CMD",
-          "curl",
-          "-H",
-          "x-api-key: ${APP_KEY}",
-          "-f",
-          "http://localhost:${APP_PORT}/",
-        ]
+      test: ["CMD", "curl", "--fail", "http://localhost:${APP_PORT}/health"]
       interval: 10s
       timeout: 5s
       retries: 3

@@ -17,6 +17,9 @@ export default sequelize.define(
       type: DataTypes.TEXT,
       allowNull: false,
     },
+    created_at: {
+      type: DataTypes.DATE,
+    },
   },
   {
     tableName: "posts",

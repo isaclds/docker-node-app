@@ -14,6 +14,10 @@ export default sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -21,6 +25,9 @@ export default sequelize.define(
     isActive: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
+    },
+    created_at: {
+      type: DataTypes.DATE,
     },
   },
   {
