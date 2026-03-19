@@ -2,13 +2,13 @@ import express from "express";
 import sequelize from "./infra/database.js";
 import routes from "./routes/index.js";
 import criarReposta from "./utils/criarResposta.js";
+import { logger } from "./utils/logger.js";
 
 try {
   await sequelize.authenticate();
-  console.log("Database connected!");
+  logger.info("Database connected!");
 } catch {
-  console.log("Unable to connect to the data base!");
-
+  logger.info("Unable to connect to the data base!");
   throw new Error("Service is currently unavailable. Please try again later.");
 }
 
@@ -20,9 +20,9 @@ app.get("/health", (req, res) => {
 
 // Midleware to validate token
 app.use(function (req, res, next) {
-  console.log("---HEADERS---");
+  logger.info("---HEADERS---");
   const headers = req.headers;
-  console.log(headers);
+  logger.info(JSON.stringify(headers) || null);
 
   const apiKey = headers["x-api-key"];
 

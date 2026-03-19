@@ -1,7 +1,7 @@
-import User from "./User.js";
-import Post from "./Post.js";
+import Users from "./Users.js";
+import Posts from "./Posts.js";
 
-User.hasMany(Post, { as: "posts" });
-Post.belongsTo(User, { foreignKey: "userId", as: "author" });
+Users.hasMany(Posts, { as: "posts" });
+Posts.belongsTo(Users, { foreignKey: "userId", as: "author" });
 
-export { User, Post };
+export { Users, Posts };

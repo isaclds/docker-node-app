@@ -1,9 +1,9 @@
-import { Post } from "../models/index.js";
+import { Posts } from "../models/index.js";
 import BaseRepository from "./BaseRepository.js";
 
 class PostRepository extends BaseRepository {
   constructor() {
-    super(Post);
+    super(Posts);
   }
 
   async findWithAuthor(id) {
@@ -17,4 +17,4 @@ class PostRepository extends BaseRepository {
   }
 }
 
-export default PostRepository;
+export default new PostRepository();

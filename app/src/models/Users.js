@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import sequelize from "../infra/database.js";
 
 export default sequelize.define(
-  "User",
+  "Users",
   {
     id: {
       type: DataTypes.UUID,

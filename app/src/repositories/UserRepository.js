@@ -1,10 +1,10 @@
 import { where } from "sequelize";
-import User from "../models/index.js";
+import Users from "../models/index.js";
 import BaseRepository from "./BaseRepository.js";
 
 class UserRepository extends BaseRepository {
   constructor() {
-    super(User);
+    super(Users);
   }
 
   async findByEmail(email) {
@@ -22,4 +22,4 @@ class UserRepository extends BaseRepository {
   }
 }
 
-export default UserRepository;
+export default new UserRepository();

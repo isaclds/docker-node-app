@@ -28,7 +28,7 @@ services:
     env_file:
       - .env
     environment:
-      POSTGRES_HOST: db # nome serviço postgres
+      POSTGRES_HOST: db
     depends_on:
       db:
         condition: service_healthy
