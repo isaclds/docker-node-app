@@ -3,6 +3,19 @@ import AppError from "../errors/AppError.js";
 import criarResposta from "../utils/criarResposta.js";
 import { logger } from "../utils/logger.js";
 
+async function getAllPosts(req) {
+  try {
+    const response = await PostRepository.findAll();
+
+    return criarResposta(true, "All posts!", response, 200);
+  } catch (error) {
+    const resposta = criarResposta(false, "Internal Server Error", error, 500);
+
+    logger.info(`Error: `, error);
+    return resposta;
+  }
+}
+
 async function getPostById(req) {
   try {
     const id = req?.params?.id;
@@ -22,9 +35,9 @@ async function getPostById(req) {
       resposta.status = error.statusCode;
     }
 
-    logger.error(`Error: `, error);
+    logger.info(`Error: `, error);
     return resposta;
   }
 }
 
-export { getPostById };
+export { getAllPosts, getPostById };

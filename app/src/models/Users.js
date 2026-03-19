@@ -25,9 +25,7 @@ export default sequelize.define(
     isActive: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
-    },
-    created_at: {
-      type: DataTypes.DATE,
+      field: "is_active",
     },
   },
   {

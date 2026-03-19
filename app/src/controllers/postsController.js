@@ -1,4 +1,4 @@
-import { getPostById } from "../services/postsService.js";
+import { getPostById, getAllPosts } from "../services/postsService.js";
 import criarResposta from "../utils/criarResposta.js";
 
 async function createPost(req, res) {
@@ -8,21 +8,20 @@ async function createPost(req, res) {
 
 async function listAllPosts(req, res) {
   try {
-  } catch {}
+    const response = await getAllPosts(req);
+    res.status(response.status).json(response);
+  } catch {
+    const response = criarResposta(false, "Internal Error", error, 500);
+    res.status(response.status).json(response);
+  }
 }
 
 async function listOnePost(req, res) {
   try {
     const response = await getPostById(req);
-    logger.info("Entrou");
     res.status(response.status).json(response);
   } catch {
-    const response = criarResposta(
-      false,
-      "Internal Error",
-      "Not expected Internal Error",
-      500,
-    );
+    const response = criarResposta(false, "Internal Error", error, 500);
     res.status(response.status).json(response);
   }
 }
