@@ -1,5 +1,5 @@
 import express from "express";
-import sequelize from "./config/database.js";
+import sequelize from "./infra/database.js";
 import routes from "./routes/index.js";
 import criarReposta from "./utils/criarResposta.js";
 
