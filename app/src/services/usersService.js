@@ -1,9 +1,29 @@
 import UserRepository from "../repositories/UserRepository.js";
 
-async function create(req, res) {}
+async function create(req) {}
 
-async function listAll(req, res) {}
+async function listAll(req) {
+  try {
+    const response = await UserRepository.findAllUsers();
 
-async function listOne(req, res) {}
+    return {
+      success: true,
+      title: "All Users retrieved successfully.",
+      data: response,
+      status: 200,
+    };
+  } catch (error) {
+    logger.info(`Error: `, error);
 
-export default "teste";
+    return criarResposta(
+      false,
+      "An unexpected error occurred while retrieving posts.",
+      error,
+      500,
+    );
+  }
+}
+
+async function listOne(req) {}
+
+export { create, listAll, listOne };

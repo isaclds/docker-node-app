@@ -1,4 +1,3 @@
-import { where } from "sequelize";
 import { Users } from "../models/index.js";
 import BaseRepository from "./BaseRepository.js";
 
@@ -7,12 +6,26 @@ class UserRepository extends BaseRepository {
     super(Users);
   }
 
+  async findAllUsers() {
+    return this.findAll({
+      attributes: { exclude: ["password"] },
+    });
+  }
+
   async findByEmail(email) {
-    return this.findOne({ email });
+    return this.findOne(
+      { email },
+      {
+        attributes: { exclude: ["password"] },
+      },
+    );
   }
 
   async findActiveUser() {
-    return this.findAll({ where: { isActive: true } });
+    return this.findAll({
+      where: { isActive: true },
+      attributes: { exclude: ["password"] },
+    });
   }
 
   async findWithPosts(id) {
