@@ -1,5 +1,5 @@
 import { where } from "sequelize";
-import {Users} from "../models/index.js";
+import { Users } from "../models/index.js";
 import BaseRepository from "./BaseRepository.js";
 
 class UserRepository extends BaseRepository {
@@ -18,6 +18,7 @@ class UserRepository extends BaseRepository {
   async findWithPosts(id) {
     return this.findById(id, {
       include: [{ association: "posts" }],
+      attributes: { exclude: ["password"] },
     });
   }
 }

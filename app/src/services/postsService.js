@@ -7,7 +7,7 @@ import { logger } from "../utils/logger.js";
 
 async function getAllPosts(req) {
   try {
-    const response = await PostRepository.findAll();
+    const response = await PostRepository.findAllWithAuthor();
 
     return {
       success: true,
@@ -34,7 +34,7 @@ async function getPostById(req) {
 
     logger.info(`Post Id: ${id}`);
 
-    const response = await PostRepository.findById(id);
+    const response = await PostRepository.findWithAuthor(id);
     if (!response)
       throw new AppError("No post was found with the provided ID.", 404);
 

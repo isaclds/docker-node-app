@@ -8,7 +8,18 @@ class PostRepository extends BaseRepository {
 
   async findWithAuthor(id) {
     return this.findById(id, {
-      include: [{ association: "author" }],
+      include: [{ association: "author", attributes: ["email"] }],
+    });
+  }
+
+  async findAllWithAuthor() {
+    return this.findAll({
+      include: [
+        {
+          association: "author",
+          attributes: ["email"],
+        },
+      ],
     });
   }
 
