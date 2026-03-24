@@ -1,5 +1,5 @@
 import { where } from "sequelize";
-import Users from "../models/index.js";
+import {Users} from "../models/index.js";
 import BaseRepository from "./BaseRepository.js";
 
 class UserRepository extends BaseRepository {

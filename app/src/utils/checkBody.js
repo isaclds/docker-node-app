@@ -4,10 +4,18 @@ export default function checkBody(body, keys) {
   const errors = [];
 
   keys.forEach((key) => {
-    if (!(key in body)) errors.push(key);
+    if (!(key in body)) {
+      errors.push(key);
+      return;
+    }
+    if (body.key === "") errors.push(key);
   });
 
   if (errors.length > 0) {
-    throw new AppError(`Missing fields: ${errors.join(", ")}`);
+    throw new AppError(
+      "Missing required fields",
+      400,
+      `Missing fields or values: ${errors.join(", ")}`,
+    );
   }
 }

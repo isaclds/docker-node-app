@@ -9,12 +9,12 @@ async function getAllPosts(req) {
   try {
     const response = await PostRepository.findAll();
 
-    return criarResposta(
-      true,
-      "All posts retrieved successfully.",
-      response,
-      200,
-    );
+    return {
+      success: true,
+      title: "All posts retrieved successfully.",
+      data: response,
+      status: 200,
+    };
   } catch (error) {
     logger.info(`Error: `, error);
 
@@ -51,7 +51,7 @@ async function getPostById(req) {
   }
 }
 
-async function createPost(req) {
+async function create(req) {
   /*
   email
   title
@@ -76,7 +76,11 @@ async function createPost(req) {
 
     const user = await UserRepository.findByEmail(email);
 
-    const response = await PostRepository.create(user.id, title, content);
+    const response = await PostRepository.create({
+      userId: user.id,
+      title: title,
+      content: content,
+    });
 
     if (!response.id)
       throw new AppError(
@@ -98,4 +102,4 @@ async function createPost(req) {
   }
 }
 
-export { getAllPosts, getPostById, createPost };
+export { getAllPosts, getPostById, create };

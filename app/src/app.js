@@ -20,22 +20,28 @@ app.get("/health", (req, res) => {
 
 // Midleware to validate token
 app.use(function (req, res, next) {
-  logger.info("---HEADERS---");
-  const headers = req.headers;
-  logger.info(JSON.stringify(headers) || null);
+  try {
+    logger.info("---HEADERS---");
+    const headers = req.headers;
+    logger.info(JSON.stringify(headers) || null);
 
-  const apiKey = headers["x-api-key"];
+    const apiKey = headers["x-api-key"];
 
-  if (apiKey !== process.env.APP_KEY || !apiKey) {
-    const resposta = criarReposta(
-      false,
-      "Usuário não autenticado",
-      "x-api-key está errada ou não existe",
-      401,
-    );
-    res.status(resposta.status).json(resposta);
+    if (apiKey !== process.env.APP_KEY || !apiKey) {
+      const resposta = criarReposta(
+        false,
+        "Usuário não autenticado",
+        "x-api-key está errada ou não existe",
+        401,
+      );
+      return res.status(resposta.status).json(resposta);
+    }
+
+    next();
+  } catch (error) {
+    const resposta = criarReposta(false, "Internal Error", error, 500);
+    return res.status(resposta.status).json(resposta);
   }
-  next();
 });
 
 routes(app);
