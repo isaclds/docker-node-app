@@ -6,6 +6,12 @@ class UserRepository extends BaseRepository {
     super(Users);
   }
 
+  async findById(id) {
+    return super.findById(id, {
+      attributes: { exclude: ["password"] },
+    });
+  }
+
   async findAllUsers() {
     return this.findAll({
       attributes: { exclude: ["password"] },

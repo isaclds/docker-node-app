@@ -12,6 +12,14 @@ async function listAllUsers(req, res) {
   }
 }
 
-async function listOneUsers(req, res) {}
+async function listOneUsers(req, res) {
+  try {
+    const response = await listOne(req);
+    res.status(response.status).json(response);
+  } catch (error) {
+    const response = criarResposta(false, "Internal Error", error, 500);
+    res.status(response.status).json(response);
+  }
+}
 
 export { createUsers, listAllUsers, listOneUsers };
