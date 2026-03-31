@@ -32,6 +32,16 @@ export default sequelize.define(
     tableName: "users",
     timestamps: true,
     underscored: true,
+    defaultScope: {
+      attributes: {
+        exclude: ["password"],
+      },
+    },
+    scopes: {
+      withPassword: {
+        attributes: { include: ["password"] },
+      },
+    },
     hooks: {
       beforeCreate: async (user) => {
         user.password = await bcrypt.hash(user.password, 10);
