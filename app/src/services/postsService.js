@@ -1,7 +1,7 @@
 import PostRepository from "../repositories/PostRepository.js";
 import UserRepository from "../repositories/UserRepository.js";
 import AppError from "../errors/AppError.js";
-import criarResposta from "../utils/criarResposta.js";
+import createResponse from "../utils/createResponse.js";
 import checkBody from "../utils/checkBody.js";
 import { logger } from "../utils/logger.js";
 
@@ -18,7 +18,7 @@ async function getAllPosts(req) {
   } catch (error) {
     logger.info(`Error: `, error);
 
-    return criarResposta(
+    return createResponse(
       false,
       "An unexpected error occurred while retrieving posts.",
       error,
@@ -47,7 +47,7 @@ async function getPostById(req) {
   } catch (error) {
     logger.info(`Error: `, error);
 
-    return criarResposta(
+    return createResponse(
       false,
       error.title || "An unexpected error occurred while retrieving the post.",
       error.message || error,
@@ -98,7 +98,7 @@ async function create(req) {
   } catch (error) {
     logger.info(`Error: `, error);
 
-    return criarResposta(
+    return createResponse(
       false,
       error.title || "An unexpected error occurred while creating the post.",
       error.message || error,

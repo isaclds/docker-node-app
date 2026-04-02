@@ -1,10 +1,10 @@
 import UserRepository from "../repositories/UserRepository.js";
 import AppError from "../errors/AppError.js";
-import criarResposta from "../utils/criarResposta.js";
+import createResponse from "../utils/createResponse.js";
 import checkBody from "../utils/checkBody.js";
 import { logger } from "../utils/logger.js";
 
-async function create(req) {
+async function createUsers(req) {
   try {
     const body = req.body;
     if (!body)
@@ -43,11 +43,11 @@ async function create(req) {
     logger.error(`Error creating user:`, error);
 
     if (error instanceof AppError) {
-      return criarResposta(false, error.title, error.message, error.status);
+      return createResponse(false, error.title, error.message, error.status);
     }
 
     if (error.name === "SequelizeUniqueConstraintError") {
-      return criarResposta(
+      return createResponse(
         false,
         "Duplicate entry",
         "Email already exists",
@@ -56,7 +56,7 @@ async function create(req) {
     }
 
     if (error.name === "SequelizeValidationError") {
-      return criarResposta(
+      return createResponse(
         false,
         "Validation error",
         error.errors.map((e) => e.message).join(", "),
@@ -64,8 +64,7 @@ async function create(req) {
       );
     }
 
-    // Generic error
-    return criarResposta(
+    return createResponse(
       false,
       "Internal server error",
       "An unexpected error occurred while creating user",
@@ -74,29 +73,23 @@ async function create(req) {
   }
 }
 
-async function listAll(req) {
-  try {
-    const response = await UserRepository.findAllUsers();
-
-    return {
-      success: true,
-      title: "All Users retrieved successfully",
-      data: response,
-      status: 200,
-    };
-  } catch (error) {
-    logger.info(`Error: `, error);
-
-    return criarResposta(
-      false,
-      error.title || "An unexpected error occurred while retrieving the User.",
-      error.message || error,
-      error.status || 500,
-    );
-  }
+async function login(req) {
+  // TODO: Implement login logic
 }
 
-async function listOne(req) {
+async function getProfile(req) {
+  // TODO: Implement getProfile logic
+}
+
+async function logout(req) {
+  // TODO: Implement logout logic
+}
+
+async function changePassword(req) {
+  // TODO: Implement changePassword logic
+}
+
+async function listOneUsers(req) {
   try {
     const id = req?.params?.id;
     if (!id) throw new AppError("User ID is required.", 400);
@@ -114,7 +107,7 @@ async function listOne(req) {
   } catch (error) {
     logger.info(`Error: `, error);
 
-    return criarResposta(
+    return createResponse(
       false,
       error.title || "An unexpected error occurred while retrieving the User.",
       error.message || error,
@@ -123,4 +116,44 @@ async function listOne(req) {
   }
 }
 
-export { create, listAll, listOne };
+async function updateUser(req) {
+  // TODO: Implement updateUser logic
+}
+
+async function deleteUser(req) {
+  // TODO: Implement deleteUser logic
+}
+
+async function listAllUsers(req) {
+  try {
+    const response = await UserRepository.findAllUsers();
+
+    return {
+      success: true,
+      title: "All Users retrieved successfully",
+      data: response,
+      status: 200,
+    };
+  } catch (error) {
+    logger.info(`Error: `, error);
+
+    return createResponse(
+      false,
+      error.title || "An unexpected error occurred while retrieving the User.",
+      error.message || error,
+      error.status || 500,
+    );
+  }
+}
+
+export {
+  createUsers,
+  login,
+  getProfile,
+  logout,
+  changePassword,
+  listOneUsers,
+  updateUser,
+  deleteUser,
+  listAllUsers,
+};

@@ -1,15 +1,34 @@
 import express from "express";
+import { authenticateToken } from "../middlewares/authMiddleware.js";
 import {
   createUsers,
-  listAllUsers,
+  login,
+  getProfile,
+  logout,
+  changePassword,
   listOneUsers,
+  updateUser,
+  deleteUser,
+  listAllUsers,
 } from "../controllers/usersController.js";
 
 const routes = express.Router();
 
-routes.get("/:id", listOneUsers);
-routes.get("/", listAllUsers);
+//Public
+routes.post("/register", createUsers);
+routes.post("/login", login);
 
-routes.post("/", createUsers);
+//Protected (JWT Required)
+routes.use(authenticateToken);
+
+routes.get("/profile", getProfile);
+
+routes.post("/logout", logout);
+routes.post("/change-password", changePassword);
+
+routes.get("/:id", listOneUsers);
+routes.put("/:id", updateUser);
+routes.delete("/:id", deleteUser);
+routes.get("/", listAllUsers);
 
 export default routes;
