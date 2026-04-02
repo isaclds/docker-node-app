@@ -22,9 +22,9 @@ services:
       retries: 3
       start_period: 30s
 
-  app:
+  api:
     build: .
-    container_name: app
+    container_name: api
     env_file:
       - .env
     environment:
@@ -36,11 +36,28 @@ services:
       - public_network
       - private_network
     healthcheck:
-      test: ["CMD", "curl", "--fail", "http://localhost:${APP_PORT}/health"]
+      test: ["CMD", "curl", "--fail", "http://localhost:${API_PORT}/health"]
       interval: 10s
       timeout: 5s
       retries: 3
       start_period: 30s
+
+  # need to configure and test the web
+  # web:
+  #   image: ./web
+  #   container_name: web
+  #   environment:
+  #     - .env
+  #   depends_on:
+  #     api:
+  #       condition: service_healthy
+  #   networks:
+  #     - public_network
+  #   healthcheck:
+  #     test: ["CMD", "curl", "--fail", "http://localhost:80"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 3
 
   nginx:
     image: nginx:1.24-alpine
@@ -51,7 +68,9 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
-      app:
+      web:
+        condition: service_started
+      api:
         condition: service_healthy
     networks:
       - public_network
