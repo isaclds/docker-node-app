@@ -103,10 +103,15 @@ async function listOne(req) {
 
     const response = await UserRepository.findById(id);
     if (!response)
-      throw new AppError("No post was found with the provided ID.", 404);
+      throw new AppError("No user was found with the provided ID.", 404);
 
-    return criarResposta(true, "User retrieved successfully.", response, 200);
-  } catch {
+    return {
+      success: true,
+      title: "User retrieved successfully.",
+      data: response,
+      status: 200,
+    };
+  } catch (error) {
     logger.info(`Error: `, error);
 
     return criarResposta(

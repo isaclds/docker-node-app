@@ -38,7 +38,12 @@ async function getPostById(req) {
     if (!response)
       throw new AppError("No post was found with the provided ID.", 404);
 
-    return criarResposta(true, "Post retrieved successfully.", response, 200);
+    return {
+      success: true,
+      title: "Post retrieved successfully.",
+      data: response,
+      status: 200,
+    };
   } catch (error) {
     logger.info(`Error: `, error);
 
@@ -52,11 +57,6 @@ async function getPostById(req) {
 }
 
 async function create(req) {
-  /*
-  email
-  title
-  content
-  */
   try {
     const body = req.body;
     logger.info("Body received: ", body);
@@ -89,7 +89,12 @@ async function create(req) {
         "The post could not be created. Please try again.",
       );
 
-    return criarResposta(true, "Post created successfully.", response, 201);
+    return {
+      success: true,
+      title: "Post created successfully.",
+      data: response,
+      status: 201,
+    };
   } catch (error) {
     logger.info(`Error: `, error);
 
