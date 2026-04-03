@@ -3,6 +3,13 @@
 
 ### dotenv ###
 ## deveria ter .env, mas como é para estudo deixei sem
+# SSL Keys (NEVER COMMIT)
+*.key
+*.pem
+*.pkcs12
+ca/ca.srl
+ca/server.csr
+ssl/private/
 
 ### Node ###
 # Logs
