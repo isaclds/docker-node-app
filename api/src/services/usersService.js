@@ -1,3 +1,5 @@
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import UserRepository from "../repositories/UserRepository.js";
 import AppError from "../errors/AppError.js";
 import createResponse from "../utils/createResponse.js";
@@ -75,6 +77,64 @@ async function createUsers(req) {
 
 async function login(req) {
   // TODO: Implement login logic
+  try {
+    const body = req.body;
+    if (!body)
+      throw new AppError(
+        "Request body is missing.",
+        400,
+        "The request must include a body.",
+      );
+
+    checkBody(body, ["email", "password"]);
+
+    const email = body.email;
+    const password = body.password;
+
+    const user = await UserRepository.findByEmail(email);
+
+    if (!user)
+      throw new AppError(
+        "The user doesn't exists",
+        404,
+        "The user couldn't be found.",
+      );
+
+    const isValid = await bcrypt.compare(password, user.password);
+
+    logger.info(user.password);
+
+    if (!isValid)
+      throw new AppError(
+        "Invalid Password",
+        401,
+        "The provided password is wrong",
+      );
+
+    const token = jwt.sign(
+      { id: user.id, email: user.email, name: user.name },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "12h",
+      },
+    );
+
+    return {
+      success: true,
+      title: "Login successfully!",
+      data: token,
+      status: 200,
+    };
+  } catch (error) {
+    logger.info(`Error: `, error);
+
+    return createResponse(
+      false,
+      error.title || "An unexpected error occurred while trying to login",
+      error.message || error,
+      error.status || 500,
+    );
+  }
 }
 
 async function getProfile(req) {

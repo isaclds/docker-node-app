@@ -2,13 +2,13 @@ FROM node:22-alpine
 
 RUN apk --no-cache add curl
 
-WORKDIR /app
+WORKDIR /api
 
-COPY ./app/package*.json ./
+COPY ./api/package*.json ./
 RUN npm install
 
-COPY ./app/server.js ./
-COPY ./app/src/ ./src/
+COPY ./api/server.js ./
+COPY ./api/src/ ./src/
 
 EXPOSE 3000
 

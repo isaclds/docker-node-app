@@ -22,7 +22,7 @@ class UserRepository extends BaseRepository {
   }
 
   async findByEmail(email) {
-    return this.findOne({ email });
+    return this.model.scope("withPassword").findOne({ where: { email } });
   }
 
   async findActiveUser() {
