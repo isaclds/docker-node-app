@@ -2,8 +2,7 @@ import createResponse from "../utils/createResponse.js";
 import jwt from "jsonwebtoken";
 
 async function authenticateToken(req, res, next) {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
+  const token = req.headers["authorization"] || req.headers["Authorization"];
 
   if (!token) {
     const returnData = createResponse(

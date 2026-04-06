@@ -1,4 +1,3 @@
-import AppError from "../errors/AppError.js";
 import { Users } from "../models/index.js";
 import BaseRepository from "./BaseRepository.js";
 
@@ -8,9 +7,11 @@ class UserRepository extends BaseRepository {
   }
 
   async create(data) {
-    const instance = await super.create(data);
-    const { password, ...userWithoutPassword } = instance.toJSON();
-    return userWithoutPassword;
+    return await super.create(data);
+  }
+
+  async updatePassword(id, password) {
+    return this.update(id, { password: password });
   }
 
   async findById(id) {
