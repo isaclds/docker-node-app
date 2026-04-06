@@ -76,7 +76,6 @@ async function createUsers(req) {
 }
 
 async function login(req) {
-  // TODO: Implement login logic
   try {
     const body = req.body;
     if (!body)
@@ -135,14 +134,6 @@ async function login(req) {
       error.status || 500,
     );
   }
-}
-
-async function getProfile(req) {
-  // TODO: Implement getProfile logic
-}
-
-async function logout(req) {
-  // TODO: Implement logout logic
 }
 
 async function changePassword(req) {
@@ -210,7 +201,6 @@ export {
   createUsers,
   login,
   getProfile,
-  logout,
   changePassword,
   listOneUsers,
   updateUser,

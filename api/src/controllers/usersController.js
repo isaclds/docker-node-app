@@ -3,8 +3,6 @@ import {
   listAllUsers,
   listOneUsers,
   login,
-  getProfile,
-  logout,
   changePassword,
   updateUser,
   deleteUser,
@@ -51,26 +49,6 @@ async function loginController(req, res) {
   }
 }
 
-async function getProfileController(req, res) {
-  try {
-    const response = await getProfile(req);
-    res.status(response.status).json(response);
-  } catch (error) {
-    const response = createResponse(false, "Internal Error", error, 500);
-    res.status(response.status).json(response);
-  }
-}
-
-async function logoutController(req, res) {
-  try {
-    const response = await logout(req);
-    res.status(response.status).json(response);
-  } catch (error) {
-    const response = createResponse(false, "Internal Error", error, 500);
-    res.status(response.status).json(response);
-  }
-}
-
 async function changePasswordController(req, res) {
   try {
     const response = await changePassword(req);
@@ -106,8 +84,6 @@ export {
   listAllUsersController as listAllUsers,
   listOneUsersController as listOneUsers,
   loginController as login,
-  getProfileController as getProfile,
-  logoutController as logout,
   changePasswordController as changePassword,
   updateUserController as updateUser,
   deleteUserController as deleteUser,

@@ -3,8 +3,6 @@ import { authenticateToken } from "../middlewares/authMiddleware.js";
 import {
   createUsers,
   login,
-  getProfile,
-  logout,
   changePassword,
   listOneUsers,
   updateUser,
@@ -21,9 +19,6 @@ routes.post("/login", login);
 //Protected (JWT Required)
 routes.use(authenticateToken);
 
-routes.get("/profile", getProfile);
-
-routes.post("/logout", logout);
 routes.post("/change-password", changePassword);
 
 routes.get("/:id", listOneUsers);
