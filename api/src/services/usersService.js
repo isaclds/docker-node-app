@@ -5,6 +5,7 @@ import AppError from "../errors/AppError.js";
 import createResponse from "../utils/createResponse.js";
 import checkBody from "../utils/checkBody.js";
 import removePassword from "../utils/removePassword.js";
+import { checkOwnership } from "../utils/validate.js";
 import { logger } from "../utils/logger.js";
 
 async function createUsers(req) {
@@ -170,6 +171,11 @@ async function changePassword(req) {
     if (!user)
       throw new AppError("User not found", 404, "The user couldn't be found.");
 
+    const userId = user.id;
+    const authenticatedUserId = req.user.id; // From auth middleware
+
+    checkOwnership(authenticatedUserId, userId);
+
     const encryptedPassword = await bcrypt.hash(password, 10);
     const updatePassword = await UserRepository.updatePassword(
       user.id,
@@ -258,6 +264,10 @@ async function deleteUser(req) {
     if (!user)
       throw new AppError("User not found", 404, "The user couldn't be found.");
 
+    const userId = user.id;
+    const authenticatedUserId = req.user.id; // From auth middleware
+    checkOwnership(authenticatedUserId, userId);
+
     const isValid = await bcrypt.compare(password, user.password);
 
     if (!isValid)
@@ -267,10 +277,8 @@ async function deleteUser(req) {
         "The provided password is wrong",
       );
 
-    const response = await UserRepository.delete(user.id);
-    logger.info(
-      `User account deleted: ${email}, ${user.id} from IP: ${req.ip}`,
-    );
+    const response = await UserRepository.delete(userId);
+    logger.info(`User account deleted: ${email}, ${userId} from IP: ${req.ip}`);
 
     return {
       success: true,
@@ -288,8 +296,7 @@ async function deleteUser(req) {
 
     return createResponse(
       false,
-      error.title ||
-        "An unexpected error occurred while trying to change password",
+      error.title || "An unexpected error occurred while trying to delete user",
       error.message || error,
       error.status || 500,
     );
