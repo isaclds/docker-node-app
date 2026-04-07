@@ -100,8 +100,6 @@ async function login(req) {
 
     const isValid = await bcrypt.compare(password, user.password);
 
-    logger.info(user.password);
-
     if (!isValid)
       throw new AppError(
         "Invalid Password",
@@ -241,7 +239,61 @@ async function updateUser(req) {
 }
 
 async function deleteUser(req) {
-  // TODO: Implement deleteUser logic
+  try {
+    const body = req.body;
+    if (!body)
+      throw new AppError(
+        "Request body is missing.",
+        400,
+        "The request must include a body.",
+      );
+
+    checkBody(body, ["email", "password"]);
+
+    const email = body.email;
+    const password = body.password;
+
+    const user = await UserRepository.findByEmail(email);
+
+    if (!user)
+      throw new AppError("User not found", 404, "The user couldn't be found.");
+
+    const isValid = await bcrypt.compare(password, user.password);
+
+    if (!isValid)
+      throw new AppError(
+        "Invalid Password",
+        401,
+        "The provided password is wrong",
+      );
+
+    const response = await UserRepository.delete(user.id);
+    logger.info(
+      `User account deleted: ${email}, ${user.id} from IP: ${req.ip}`,
+    );
+
+    return {
+      success: true,
+      status: 204,
+    };
+  } catch (error) {
+    logger.info(`Error: `, error);
+
+    if (error.message.includes("bcrypt"))
+      return createResponse(
+        "Internal server error",
+        500,
+        "Password encryption failed",
+      );
+
+    return createResponse(
+      false,
+      error.title ||
+        "An unexpected error occurred while trying to change password",
+      error.message || error,
+      error.status || 500,
+    );
+  }
 }
 
 async function listAllUsers(req) {

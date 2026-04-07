@@ -23,7 +23,7 @@ routes.post("/change-password", changePassword);
 
 routes.get("/:id", listOneUsers);
 routes.put("/:id", updateUser);
-routes.delete("/:id", deleteUser);
+routes.delete("/delete", deleteUser);
 routes.get("/", listAllUsers);
 
 export default routes;

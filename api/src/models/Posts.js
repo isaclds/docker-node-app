@@ -20,6 +20,7 @@ export default sequelize.define(
     userId: {
       type: DataTypes.UUID,
       field: "user_id",
+      allowNull: false,
     },
   },
   {

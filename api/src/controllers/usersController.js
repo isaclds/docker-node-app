@@ -72,6 +72,8 @@ async function updateUserController(req, res) {
 async function deleteUserController(req, res) {
   try {
     const response = await deleteUser(req);
+    if (response.status === 204) return res.status(204).send();
+
     res.status(response.status).json(response);
   } catch (error) {
     const response = createResponse(false, "Internal Error", error, 500);
