@@ -1,6 +1,14 @@
 import AppError from "../errors/AppError.js";
 
 export default function checkBody(body, keys) {
+  if (!body || typeof body !== "object") {
+    throw new AppError(
+      "Request body is missing",
+      400,
+      "The request must include a valid body.",
+    );
+  }
+
   const errors = [];
 
   keys.forEach((key) => {
@@ -8,7 +16,7 @@ export default function checkBody(body, keys) {
       errors.push(key);
       return;
     }
-    if (body.key === "") errors.push(key);
+    if (body[key] === "") errors.push(key);
   });
 
   if (errors.length > 0) {

@@ -11,13 +11,6 @@ import { logger } from "../utils/logger.js";
 async function createUsers(req) {
   try {
     const body = req.body;
-    if (!body)
-      throw new AppError(
-        "Request body is missing.",
-        400,
-        "The request must include a body.",
-      );
-
     checkBody(body, ["name", "email", "password"]);
 
     const name = body.name;
@@ -82,13 +75,6 @@ async function createUsers(req) {
 async function login(req) {
   try {
     const body = req.body;
-    if (!body)
-      throw new AppError(
-        "Request body is missing.",
-        400,
-        "The request must include a body.",
-      );
-
     checkBody(body, ["email", "password"]);
 
     const email = body.email;
@@ -137,13 +123,6 @@ async function login(req) {
 async function changePassword(req) {
   try {
     const body = req.body;
-    if (!body)
-      throw new AppError(
-        "Request body is missing.",
-        400,
-        "The request must include a body.",
-      );
-
     checkBody(body, ["email", "password", "passwordConfirmation"]);
 
     const email = body.email;
@@ -247,13 +226,6 @@ async function updateUser(req) {
 async function deleteUser(req) {
   try {
     const body = req.body;
-    if (!body)
-      throw new AppError(
-        "Request body is missing.",
-        400,
-        "The request must include a body.",
-      );
-
     checkBody(body, ["email", "password"]);
 
     const email = body.email;
