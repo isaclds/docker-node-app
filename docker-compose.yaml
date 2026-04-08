@@ -5,10 +5,6 @@ services:
     shm_size: 128mb
     env_file:
       - .env
-    environment:
-      - POSTGRES_DB
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
     networks:
       - private_network
     volumes:

@@ -220,7 +220,6 @@ async function listOneUsers(req) {
 }
 
 async function updateUser(req) {
-  // TODO: Implement updateUser logic
   try {
     const body = req.body;
     checkBody(body, ["email", "password"]);

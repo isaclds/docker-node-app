@@ -8,7 +8,12 @@ export default new Sequelize(
     host: process.env.POSTGRES_HOST,
     port: process.env.POSTGRES_PORT || 5432,
     dialect: "postgres",
-    logging: false, // set to console.log to see SQL queries
+    logging: false,
+    timezone: "UTC",
+    dialectOptions: {
+      useUTC: true,
+      stringifyObjects: true,
+    },
     pool: {
       max: 5,
       min: 0,
