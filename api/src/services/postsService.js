@@ -109,7 +109,32 @@ async function create(req) {
 
 async function getPostsByAuthor(req) {
   try {
-  } catch (error) {}
+    const userId = req?.params?.userId;
+    if (!userId)
+      throw new AppError(
+        "User ID is required.",
+        400,
+        "The request must include a user ID.",
+      );
+
+    const response = await PostRepository.findAllByAuthor(userId);
+
+    return {
+      success: true,
+      title: "Posts retrieved successfully.",
+      data: response,
+      status: 200,
+    };
+  } catch (error) {
+    logger.info(`Error: `, error);
+
+    return createResponse(
+      false,
+      error.title || "An unexpected error occurred while retrieving posts.",
+      error.message || error,
+      error.status || 500,
+    );
+  }
 }
 
 async function update(req) {

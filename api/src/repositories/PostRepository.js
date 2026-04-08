@@ -1,3 +1,4 @@
+import { where } from "sequelize";
 import { Posts } from "../models/index.js";
 import BaseRepository from "./BaseRepository.js";
 
@@ -9,6 +10,7 @@ class PostRepository extends BaseRepository {
   async findWithAuthor(id) {
     return this.findById(id, {
       include: [{ association: "author", attributes: ["email"] }],
+      order: [["createdAt", "DESC"]],
     });
   }
 
@@ -17,9 +19,23 @@ class PostRepository extends BaseRepository {
       include: [
         {
           association: "author",
-          attributes: ["email"],
+          attributes: ["name", "email"],
         },
       ],
+      order: [["createdAt", "DESC"]],
+    });
+  }
+
+  async findAllByAuthor(userId) {
+    return this.findAll({
+      where: { userId: userId },
+      include: [
+        {
+          association: "author",
+          attributes: ["name", "email"],
+        },
+      ],
+      order: [["createdAt", "DESC"]],
     });
   }
 

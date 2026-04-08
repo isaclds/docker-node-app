@@ -12,7 +12,7 @@ import {
 const routes = express.Router();
 
 routes.get("/search", searchPosts);
-routes.get("/user/:userId", listByAuthor);
+routes.get("/users/:userId", listByAuthor);
 routes.get("/:id", listOnePost);
 routes.get("/", listAllPosts);
 
