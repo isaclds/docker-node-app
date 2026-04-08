@@ -107,4 +107,32 @@ async function create(req) {
   }
 }
 
-export { getAllPosts, getPostById, create };
+async function getPostsByAuthor(req) {
+  try {
+  } catch (error) {}
+}
+
+async function update(req) {
+  try {
+  } catch (error) {}
+}
+
+async function remove(req) {
+  try {
+  } catch (error) {}
+}
+
+async function search(req) {
+  try {
+  } catch (error) {}
+}
+
+export {
+  getPostById,
+  getAllPosts,
+  create,
+  getPostsByAuthor,
+  update,
+  remove,
+  search,
+};

@@ -4,9 +4,9 @@ import {
   listAllPosts,
   listOnePost,
   listByAuthor,
-  updatePost, // Add these
-  deletePost, // controllers
-  searchPosts, // as needed
+  updatePost,
+  deletePost,
+  searchPosts,
 } from "../controllers/postsController.js";
 
 const routes = express.Router();

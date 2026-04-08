@@ -1,4 +1,12 @@
-import { getPostById, getAllPosts, create } from "../services/postsService.js";
+import {
+  getPostById,
+  getAllPosts,
+  create,
+  getPostsByAuthor,
+  update,
+  remove,
+  search,
+} from "../services/postsService.js";
 import createResponse from "../utils/createResponse.js";
 
 async function createPost(req, res) {
@@ -31,19 +39,52 @@ async function listOnePost(req, res) {
   }
 }
 
-/*
-static async cadastrarAutor(req, res) {
-	try {
-		const novoAutor = await autor.create(req.body);
-		res
-			.status(201)
-			.json({ message: 'Cadastrado com sucesso', autor: novoAutor });
-	} catch (erro) {
-		res.status(500).json({
-			message: `${erro.message} - FALHA AO CADASTRAR AUTOR`,
-		});
-	}
+async function listByAuthor(req, res) {
+  try {
+    const response = await getPostsByAuthor(req);
+    res.status(response.status).json(response);
+  } catch (error) {
+    const response = createResponse(false, "Internal Error", error, 500);
+    res.status(response.status).json(response);
+  }
 }
-*/
 
-export { createPost, listAllPosts, listOnePost };
+async function updatePost(req, res) {
+  try {
+    const response = await update(req);
+    res.status(response.status).json(response);
+  } catch (error) {
+    const response = createResponse(false, "Internal Error", error, 500);
+    res.status(response.status).json(response);
+  }
+}
+
+async function deletePost(req, res) {
+  try {
+    const response = await remove(req);
+    res.status(response.status).json(response);
+  } catch (error) {
+    const response = createResponse(false, "Internal Error", error, 500);
+    res.status(response.status).json(response);
+  }
+}
+
+async function searchPosts(req, res) {
+  try {
+    const response = await search(req);
+    res.status(response.status).json(response);
+  } catch (error) {
+    const response = createResponse(false, "Internal Error", error, 500);
+    res.status(response.status).json(response);
+  }
+}
+
+export {
+  createPost,
+  listAllPosts,
+  listOnePost,
+  listByAuthor,
+  updatePost,
+  deletePost,
+  searchPosts,
+};
