@@ -19,11 +19,11 @@ routes.post("/login", login);
 //Protected (JWT Required)
 routes.use(authenticateToken);
 
+routes.get("/", listAllUsers);
 routes.post("/change-password", changePassword);
 
-routes.get("/:id", listOneUsers);
 routes.put("/:id", updateUser);
-routes.delete("/delete", deleteUser);
-routes.get("/", listAllUsers);
+routes.get("/:id", listOneUsers);
+routes.delete("/:id", deleteUser);
 
 export default routes;

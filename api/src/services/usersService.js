@@ -123,9 +123,9 @@ async function login(req) {
 async function changePassword(req) {
   try {
     const body = req.body;
-    checkBody(body, ["email", "password", "passwordConfirmation"]);
+    checkBody(body, ["password", "passwordConfirmation"]);
 
-    const email = body.email;
+    const authenticatedUserId = req.user.id;
     const password = body.password;
     const passwordConfirmation = body.passwordConfirmation;
 
@@ -145,19 +145,14 @@ async function changePassword(req) {
       );
     }
 
-    const user = await UserRepository.findByEmail(email);
+    const user = await UserRepository.findById(authenticatedUserId);
 
     if (!user)
       throw new AppError("User not found", 404, "The user couldn't be found.");
 
-    const userId = user.id;
-    const authenticatedUserId = req.user.id; // From auth middleware
-
-    checkOwnership(authenticatedUserId, userId);
-
     const encryptedPassword = await bcrypt.hash(password, 10);
     const updatePassword = await UserRepository.updatePassword(
-      user.id,
+      authenticatedUserId,
       encryptedPassword,
     );
 
@@ -221,14 +216,25 @@ async function listOneUsers(req) {
 
 async function updateUser(req) {
   try {
-    const body = req.body;
-    checkBody(body, ["email", "password"]);
+    const id = req?.params?.id;
 
-    const email = body.email;
+    if (!id)
+      throw new AppError(
+        "User ID is required in params.",
+        400,
+        "Please provide the ID of the user to update in the URL parameters.",
+      );
+
+    const authenticatedUserId = req.user.id; // From auth middleware
+    checkOwnership(authenticatedUserId, id);
+
+    const body = req.body;
+    checkBody(body, ["password", "update"]);
+
     const password = body.password;
     const updateData = body.update || {};
 
-    const validFields = ["name", "email", "update"];
+    const validFields = ["name", "email"];
     const isValidOperation = Object.keys(updateData).every((field) =>
       validFields.includes(field),
     );
@@ -248,14 +254,10 @@ async function updateUser(req) {
       );
     }
 
-    const user = await UserRepository.findByEmail(email);
+    const user = await UserRepository.findById(id);
 
     if (!user)
       throw new AppError("User not found", 404, "The user couldn't be found.");
-
-    const userId = user.id;
-    const authenticatedUserId = req.user.id; // From auth middleware
-    checkOwnership(authenticatedUserId, userId);
 
     const isValid = await bcrypt.compare(password, user.password);
 
@@ -328,20 +330,35 @@ async function updateUser(req) {
 
 async function deleteUser(req) {
   try {
+    const id = req?.params?.id;
+
+    if (!id)
+      throw new AppError(
+        "User ID is required in params.",
+        400,
+        "Please provide the ID of the user to delete in the URL parameters.",
+      );
+
+    const authenticatedUserId = req.user.id; // From auth middleware
+    checkOwnership(authenticatedUserId, id);
+
     const body = req.body;
     checkBody(body, ["email", "password"]);
 
     const email = body.email;
     const password = body.password;
 
-    const user = await UserRepository.findByEmail(email);
+    const user = await UserRepository.findById(id);
 
     if (!user)
       throw new AppError("User not found", 404, "The user couldn't be found.");
 
-    const userId = user.id;
-    const authenticatedUserId = req.user.id; // From auth middleware
-    checkOwnership(authenticatedUserId, userId);
+    if (user.email !== email)
+      throw new AppError(
+        "Email mismatch",
+        400,
+        "The provided email does not match the user's email.",
+      );
 
     const isValid = await bcrypt.compare(password, user.password);
 
@@ -352,8 +369,8 @@ async function deleteUser(req) {
         "The provided password is wrong",
       );
 
-    const response = await UserRepository.delete(userId);
-    logger.info(`User account deleted: ${email}, ${userId} from IP: ${req.ip}`);
+    const response = await UserRepository.delete(id);
+    logger.info(`User account deleted: ${email}, ${id} from IP: ${req.ip}`);
 
     return {
       success: true,
