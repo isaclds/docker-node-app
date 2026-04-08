@@ -221,6 +221,110 @@ async function listOneUsers(req) {
 
 async function updateUser(req) {
   // TODO: Implement updateUser logic
+  try {
+    const body = req.body;
+    checkBody(body, ["email", "password"]);
+
+    const email = body.email;
+    const password = body.password;
+    const updateData = body.update || {};
+
+    const validFields = ["name", "email", "update"];
+    const isValidOperation = Object.keys(updateData).every((field) =>
+      validFields.includes(field),
+    );
+
+    if (!isValidOperation)
+      throw new AppError(
+        "Invalid update fields",
+        400,
+        `Only the following fields can be updated: ${validFields.join(", ")}`,
+      );
+
+    if (Object.keys(updateData).length === 0) {
+      throw new AppError(
+        "No updates provided",
+        400,
+        "At least one field to update is required",
+      );
+    }
+
+    const user = await UserRepository.findByEmail(email);
+
+    if (!user)
+      throw new AppError("User not found", 404, "The user couldn't be found.");
+
+    const userId = user.id;
+    const authenticatedUserId = req.user.id; // From auth middleware
+    checkOwnership(authenticatedUserId, userId);
+
+    const isValid = await bcrypt.compare(password, user.password);
+
+    if (!isValid)
+      throw new AppError(
+        "Invalid Password",
+        401,
+        "The provided password is wrong",
+      );
+
+    if (updateData.email && updateData.email !== user.email) {
+      const existingUser = await UserRepository.findByEmail(updateData.email);
+      if (existingUser) {
+        throw new AppError(
+          "Email already exists",
+          409,
+          "The email address is already registered to another account",
+        );
+      }
+    }
+
+    const updatedUser = await UserRepository.update(user.id, updateData);
+    const response = removePassword(updatedUser);
+
+    return {
+      success: true,
+      title: "User updated successfully",
+      data: response,
+      status: 200,
+    };
+  } catch (error) {
+    console.error("Update user error:", error);
+
+    // Handle specific error types
+    if (error instanceof AppError) {
+      return {
+        success: false,
+        title: error.title || "Update failed",
+        message: error.message,
+        status: error.status || 400,
+      };
+    }
+
+    if (error.message && error.message.includes("bcrypt")) {
+      return {
+        success: false,
+        title: "Internal server error",
+        message: "Password verification failed",
+        status: 500,
+      };
+    }
+
+    if (error.code === "23505") {
+      return {
+        success: false,
+        title: "Duplicate entry",
+        message: "A user with this information already exists",
+        status: 409,
+      };
+    }
+
+    return {
+      success: false,
+      title: "An unexpected error occurred while trying to update the user",
+      message: error.message || "Internal server error",
+      status: error.status || 500,
+    };
+  }
 }
 
 async function deleteUser(req) {
