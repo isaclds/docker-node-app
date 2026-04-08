@@ -139,16 +139,19 @@ async function getPostsByAuthor(req) {
 
 async function update(req) {
   try {
+    // TODO: Implement update functionality
   } catch (error) {}
 }
 
 async function remove(req) {
   try {
+    // TODO: Implement remove functionality
   } catch (error) {}
 }
 
 async function search(req) {
   try {
+    // TODO: Implement search functionality
   } catch (error) {}
 }
 

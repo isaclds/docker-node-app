@@ -1,4 +1,5 @@
 import express from "express";
+import { authenticateToken } from "../middlewares/authMiddleware.js";
 import {
   createPost,
   listAllPosts,
@@ -15,6 +16,9 @@ routes.get("/search", searchPosts);
 routes.get("/users/:userId", listByAuthor);
 routes.get("/:id", listOnePost);
 routes.get("/", listAllPosts);
+
+//Protected (JWT Required)
+routes.use(authenticateToken);
 
 routes.post("/", createPost);
 routes.put("/:id", updatePost);
