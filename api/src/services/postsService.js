@@ -4,6 +4,7 @@ import AppError from "../errors/AppError.js";
 import createResponse from "../utils/createResponse.js";
 import checkBody from "../utils/checkBody.js";
 import { logger } from "../utils/logger.js";
+import handleError from "../errors/handleError.js";
 
 async function getAllPosts(req) {
   try {
@@ -16,14 +17,8 @@ async function getAllPosts(req) {
       status: 200,
     };
   } catch (error) {
-    logger.info(`Error: `, error);
-
-    return createResponse(
-      false,
-      "An unexpected error occurred while retrieving posts.",
-      error,
-      500,
-    );
+    logger.error(`Error getting all posts:`, error);
+    return handleError(error, "getAllPosts");
   }
 }
 
@@ -45,14 +40,8 @@ async function getPostById(req) {
       status: 200,
     };
   } catch (error) {
-    logger.info(`Error: `, error);
-
-    return createResponse(
-      false,
-      error.title || "An unexpected error occurred while retrieving the post.",
-      error.message || error,
-      error.status || 500,
-    );
+    logger.error(`Error getting post by id: `, error);
+    return handleError(error, "getPostById");
   }
 }
 
@@ -96,14 +85,8 @@ async function create(req) {
       status: 201,
     };
   } catch (error) {
-    logger.info(`Error: `, error);
-
-    return createResponse(
-      false,
-      error.title || "An unexpected error occurred while creating the post.",
-      error.message || error,
-      error.status || 500,
-    );
+    logger.error(`Error creating post: `, error);
+    return handleError(error, "create");
   }
 }
 
@@ -126,14 +109,8 @@ async function getPostsByAuthor(req) {
       status: 200,
     };
   } catch (error) {
-    logger.info(`Error: `, error);
-
-    return createResponse(
-      false,
-      error.title || "An unexpected error occurred while retrieving posts.",
-      error.message || error,
-      error.status || 500,
-    );
+    logger.error(`Error getting posts by author: `, error);
+    return handleError(error, "getPostsByAuthor");
   }
 }
 
