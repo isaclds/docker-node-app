@@ -7,7 +7,7 @@ WORKDIR /api
 COPY ./api/package*.json ./
 RUN npm install
 
-COPY ./api/server.js ./
+COPY ./api/*.js ./
 COPY ./api/src/ ./src/
 
 EXPOSE 3000

@@ -43,8 +43,7 @@ The `-v` flag removes volumes, ensuring a clean database state. Remove it if you
 ### Access the Application
 
 - **Web Interface (HTTP)**: `http://localhost:8080/`
-- **Web Interface (HTTPS)**: `https://localhost:8443/`
-- **API Endpoints**: `http://localhost:8080/api` or `https://localhost:8443/api`
+- **API Endpoints**: `http://localhost:8080/api`, docs: `http://localhost:8080/api/docs`
 - **Database**: Available internally to the API service only
 
 > **Note**: When accessing via HTTPS for the first time, your browser will show a security warning because the certificate is self-signed. This is normal for development. To remove the warning, import `ca/ca.crt` as a trusted certificate authority in your browser.

@@ -3,7 +3,6 @@ import jwt from "jsonwebtoken";
 import UserRepository from "../repositories/UserRepository.js";
 import AppError from "../errors/AppError.js";
 import handleError from "../errors/handleError.js";
-import createResponse from "../utils/createResponse.js";
 import checkBody from "../utils/checkBody.js";
 import removePassword from "../utils/removePassword.js";
 import { checkOwnership } from "../utils/validate.js";

@@ -116,20 +116,58 @@ async function getPostsByAuthor(req) {
 
 async function update(req) {
   try {
-    // TODO: Implement update functionality
-  } catch (error) {}
+    const body = req.body;
+    logger.info("Body received: " + JSON.stringify(body));
+
+    if (!body)
+      throw new AppError(
+        "Request body is missing.",
+        400,
+        "The request must include a body.",
+      );
+
+    checkBody(body, ["id", "title", "content"]);
+
+    const { id, title, content } = body;
+
+    const post = await PostRepository.update(id, {
+      title: title,
+      content: content,
+    });
+
+    logger.info(post);
+
+    if (!post)
+      throw new AppError("Failed to update post.", 400, "Couldn't update post");
+
+    return {
+      success: true,
+      title: "Post update successfully",
+      data: post.dataValues,
+      status: 200,
+    };
+  } catch (error) {
+    logger.error(`Error updating post: `, error);
+    return handleError(error, "update");
+  }
 }
 
 async function remove(req) {
   try {
     // TODO: Implement remove functionality
-  } catch (error) {}
+  } catch (error) {
+    logger.error(`Error removing post: `, error);
+    return handleError(error, "remove");
+  }
 }
 
 async function search(req) {
   try {
     // TODO: Implement search functionality
-  } catch (error) {}
+  } catch (error) {
+    logger.error(`Error searching post: `, error);
+    return handleError(error, "search");
+  }
 }
 
 export {
