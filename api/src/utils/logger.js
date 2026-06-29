@@ -20,14 +20,16 @@ const logger = createLogger({
     ),
   ),
   transports: [
-    //Prints logs to your terminal screen
     new transports.Console(),
-    //Saves logs to a file
-    new transports.File({
-      filename: logFilename,
-      maxsize: 20 * 1024 * 1024,
-      maxFiles: 5,
-    }),
+    ...(logFilename
+      ? [
+          new transports.File({
+            filename: logFilename,
+            maxsize: 20 * 1024 * 1024,
+            maxFiles: 5,
+          }),
+        ]
+      : []),
   ],
 });
 
