@@ -22,6 +22,8 @@ async function createUsers(req) {
         "The user couldn't be created. Please try again",
       );
 
+    logger.info(`New user registered successfully: ${response.id} (${email})`);
+
     return {
       success: true,
       title: "User created successfully",
@@ -57,6 +59,8 @@ async function login(req) {
       { expiresIn: "12h" },
     );
 
+    logger.info(`User logged in successfully: ${user.id} (${user.email})`);
+
     return {
       success: true,
       title: "Login successfully!",
@@ -71,15 +75,9 @@ async function login(req) {
 
 async function changePassword(req) {
   try {
-    const { password, passwordConfirmation } = req.body;
-    checkBody(req.body, ["password", "passwordConfirmation"]);
-
-    if (password !== passwordConfirmation)
-      throw new AppError(
-        "Passwords don't match",
-        400,
-        "Passwords must match to change",
-      );
+    const { password } = req.body;
+    const id = req.user.id;
+    checkBody(req.body, ["password"]);
 
     if (password.length < 8)
       throw new AppError(
@@ -88,15 +86,20 @@ async function changePassword(req) {
         "Password must be at least 8 characters long",
       );
 
-    const user = await UserRepository.findById(req.user.id);
+    const user = await UserRepository.findByIdWithPassword(id);
     if (!user)
       throw new AppError("User not found", 404, "The user couldn't be found.");
 
+    const isSamePassword = await bcrypt.compare(password, user.password);
+    if (isSamePassword)
+      throw new AppError(
+        "Password already used",
+        409,
+        "The provided password is the same as the current one.",
+      );
+
     const encryptedPassword = await bcrypt.hash(password, 10);
-    const updatedUser = await UserRepository.updatePassword(
-      req.user.id,
-      encryptedPassword,
-    );
+    const updatedUser = await UserRepository.updatePassword(id, encryptedPassword);
 
     if (!updatedUser)
       throw new AppError(
@@ -104,6 +107,8 @@ async function changePassword(req) {
         400,
         "Password update failed",
       );
+
+    logger.info(`User changed password: ${id}`);
 
     return {
       success: true,
@@ -149,18 +154,10 @@ async function listOneUsers(req) {
 
 async function updateUser(req) {
   try {
-    const { id } = req.params;
-    if (!id)
-      throw new AppError(
-        "User ID is required in params.",
-        400,
-        "Provide the ID of the user to update in the URL.",
-      );
+    const id = req.user.id;
+    checkBody(req.body, "update");
 
-    checkOwnership(req.user.id, id);
-    checkBody(req.body, ["password", "update"]);
-
-    const { password, update: updateData = {} } = req.body;
+    const { update: updateData = {} } = req.body;
 
     const validFields = ["name", "email"];
     const isValidOperation = Object.keys(updateData).every((f) =>
@@ -180,29 +177,23 @@ async function updateUser(req) {
         "At least one field to update is required",
       );
 
-    const user = await UserRepository.findById(id);
+    const user = await UserRepository.findByIdWithPassword(id);
     if (!user)
       throw new AppError("User not found", 404, "The user couldn't be found.");
 
-    const isValid = await bcrypt.compare(password, user.password);
-    if (!isValid)
-      throw new AppError(
-        "Invalid password",
-        401,
-        "The provided password is wrong",
-      );
-
     if (updateData.email && updateData.email !== user.email) {
-      const existing = await UserRepository.findByEmail(updateData.email);
-      if (existing)
+      const existingUser = await UserRepository.findByEmail(updateData.email);
+      if (existingUser)
         throw new AppError(
           "Email already exists",
           409,
-          "The email address is already registered to another account",
+          "The email address is already registered to another account.",
         );
     }
 
-    const updatedUser = await UserRepository.update(user.id, updateData);
+    const updatedUser = await UserRepository.update(id, updateData);
+
+    logger.info(`User profile updated: ${id}. Fields: ${Object.keys(updateData).join(", ")}`);
 
     return {
       success: true,
@@ -231,8 +222,8 @@ async function deleteUser(req) {
 
     const { email, password } = req.body;
 
-    const user = await UserRepository.findById(id);
-    if (!user)
+    const user = await UserRepository.findByIdWithPassword(id);
+      if (!user)
       throw new AppError("User not found", 404, "The user couldn't be found.");
 
     if (user.email !== email)

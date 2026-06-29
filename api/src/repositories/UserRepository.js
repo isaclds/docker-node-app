@@ -18,6 +18,10 @@ class UserRepository extends BaseRepository {
     return super.findById(id);
   }
 
+  async findByIdWithPassword(id) {
+    return this.model.scope("withPassword").findByPk(id);
+  }
+
   async findAllUsers() {
     return this.findAll();
   }

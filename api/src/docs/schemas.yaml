@@ -1,0 +1,268 @@
+components:
+  schemas:
+
+    # ─── Primitive Entities ───────────────────────────────────────────────────
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        name:
+          type: string
+          example: "John Doe"
+        email:
+          type: string
+          format: email
+          example: "john@email.com"
+        isActive:
+          type: boolean
+          example: true
+        createdAt:
+          type: string
+          format: date-time
+          example: "2026-01-01T00:00:00.000Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2026-01-01T00:00:00.000Z"
+
+    Post:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        title:
+          type: string
+          example: "My first post"
+        content:
+          type: string
+          example: "Post content here..."
+        createdAt:
+          type: string
+          format: date-time
+          example: "2026-01-01T00:00:00.000Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2026-01-01T00:00:00.000Z"
+
+    # ─── Request Bodies ───────────────────────────────────────────────────────
+
+    RegisterRequest:
+      type: object
+      required:
+        - name
+        - email
+        - password
+      properties:
+        name:
+          type: string
+          example: "John Doe"
+          description: User's full name
+        email:
+          type: string
+          format: email
+          example: "john@email.com"
+          description: User's email address
+        password:
+          type: string
+          example: "MyS3cur3P@ss"
+          description: User's password (min 8 characters)
+
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: "john@email.com"
+          description: Registered email address
+        password:
+          type: string
+          example: "MyS3cur3P@ss"
+          description: User's password
+
+    ChangePasswordRequest:
+      type: object
+      required:
+        - password
+      properties:
+        password:
+          type: string
+          example: "NewS3cur3P@ss"
+          description: New password (min 8 characters, must differ from current)
+
+    UpdateUserRequest:
+      type: object
+      properties:
+        update:
+          type: object
+          properties:
+            name:
+              type: string
+              example: "John Updated"
+              description: New name
+            email:
+              type: string
+              format: email
+              example: "john.updated@email.com"
+              description: New email address
+
+    CreatePostRequest:
+      type: object
+      required:
+        - email
+        - title
+        - content
+      properties:
+        email:
+          type: string
+          format: email
+          example: "john@email.com"
+          description: Author's email (must be a registered user)
+        title:
+          type: string
+          example: "My first post"
+          description: Post title
+        content:
+          type: string
+          example: "Post content here..."
+          description: Post body content
+
+    UpdatePostRequest:
+      type: object
+      required:
+        - title
+        - content
+      properties:
+        title:
+          type: string
+          example: "Updated title"
+          description: New post title
+        content:
+          type: string
+          example: "Updated content here..."
+          description: New post body content
+
+    # ─── Response Wrappers ────────────────────────────────────────────────────
+
+    ApiSuccess:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        title:
+          type: string
+          example: "Operation completed successfully."
+
+    UserResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiSuccess'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/User'
+
+    UserListResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiSuccess'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/User'
+
+    LoginResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiSuccess'
+        - type: object
+          properties:
+            data:
+              type: string
+              example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+              description: JWT Bearer token
+
+    PostResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiSuccess'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/Post'
+
+    PostListResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiSuccess'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Post'
+
+    # ─── Parameters ───────────────────────────────────────────────────────────
+
+  parameters:
+    IdPath:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: "123e4567-e89b-12d3-a456-426614174000"
+
+  # ─── Error Responses ──────────────────────────────────────────────────────
+
+  responses:
+    Unauthorized:
+      description: Missing or invalid authentication token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              title:
+                type: string
+                example: "Access denied. No token provided."
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              title:
+                type: string
+                example: "The requested resource couldn't be found."
+
+    BadRequest:
+      description: Invalid request body or parameters
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              title:
+                type: string
+                example: "Missing required fields."
