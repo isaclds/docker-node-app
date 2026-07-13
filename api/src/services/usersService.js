@@ -13,6 +13,8 @@ async function createUsers(req) {
     const { name, email, password } = req.body;
     checkBody(req.body, ["name", "email", "password"]);
 
+    // TODO: implementar tratamento de email já existente
+
     const response = await UserRepository.create({ name, email, password });
 
     if (!response.id || response instanceof Error)
@@ -42,6 +44,7 @@ async function login(req) {
     checkBody(req.body, ["email", "password"]);
 
     const user = await UserRepository.findByEmail(email);
+
     if (!user)
       throw new AppError("User not found", 404, "The user couldn't be found.");
 
@@ -99,7 +102,10 @@ async function changePassword(req) {
       );
 
     const encryptedPassword = await bcrypt.hash(password, 10);
-    const updatedUser = await UserRepository.updatePassword(id, encryptedPassword);
+    const updatedUser = await UserRepository.updatePassword(
+      id,
+      encryptedPassword,
+    );
 
     if (!updatedUser)
       throw new AppError(
@@ -193,7 +199,9 @@ async function updateUser(req) {
 
     const updatedUser = await UserRepository.update(id, updateData);
 
-    logger.info(`User profile updated: ${id}. Fields: ${Object.keys(updateData).join(", ")}`);
+    logger.info(
+      `User profile updated: ${id}. Fields: ${Object.keys(updateData).join(", ")}`,
+    );
 
     return {
       success: true,
@@ -223,7 +231,7 @@ async function deleteUser(req) {
     const { email, password } = req.body;
 
     const user = await UserRepository.findByIdWithPassword(id);
-      if (!user)
+    if (!user)
       throw new AppError("User not found", 404, "The user couldn't be found.");
 
     if (user.email !== email)

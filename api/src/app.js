@@ -6,8 +6,8 @@ import { logger } from "./utils/logger.js";
 try {
   await sequelize.authenticate();
   logger.info("Database connected!");
-} catch {
-  logger.info("Unable to connect to the database!");
+} catch (err) {
+  logger.error("Unable to connect to the database!", err);
   throw new Error("Service is currently unavailable. Please try again later.");
 }
 
