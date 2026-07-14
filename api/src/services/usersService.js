@@ -14,6 +14,12 @@ async function createUsers(req) {
     checkBody(req.body, ["name", "email", "password"]);
 
     // TODO: implementar tratamento de email já existente
+    if (await UserRepository.findByEmail(email))
+      throw new AppError(
+        "This email is already registered",
+        409,
+        "Use an different email and try again",
+      );
 
     const response = await UserRepository.create({ name, email, password });
 
@@ -161,7 +167,7 @@ async function listOneUsers(req) {
 async function updateUser(req) {
   try {
     const id = req.user.id;
-    checkBody(req.body, "update");
+    checkBody(req.body, ["update"]);
 
     const { update: updateData = {} } = req.body;
 

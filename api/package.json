@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon server.js",
-    "test": "vitest --watch"
+    "test": "vitest --watch",
+    "test:coverage": "vitest run --coverage"
   },
   "keywords": [],
   "author": "Isac Lehmkuhl dos Santos",
@@ -24,6 +25,7 @@
     "winston": "^3.19.0"
   },
   "devDependencies": {
+    "@vitest/coverage-v8": "^4.1.10",
     "vitest": "^4.1.9"
   }
 }

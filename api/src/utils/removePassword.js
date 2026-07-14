@@ -1,6 +1,7 @@
 export default function removePassword(obj) {
   if (!obj) return null;
 
-  const { password, ...userWithoutPassword } = obj.toJSON();
+  const plain = typeof obj.toJSON === "function" ? obj.toJSON() : obj;
+  const { password, ...userWithoutPassword } = plain;
   return userWithoutPassword;
 }
