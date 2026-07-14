@@ -1,7 +1,7 @@
 import swaggerJsdoc from "swagger-jsdoc";
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import path from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -17,7 +17,11 @@ const options = {
     servers: [
       {
         url: `http://localhost:8080/api`,
-        description: "Development server",
+        description: "Docker development server",
+      },
+      {
+        url: `http://localhost:3000/`,
+        description: "Development server without docker",
       },
     ],
     components: {
@@ -30,7 +34,7 @@ const options = {
       },
     },
   },
-  apis: [ path.join(__dirname, "../docs/*.yaml")],
+  apis: [path.join(__dirname, "../docs/*.yaml")],
 };
 
 const swaggerSpec = swaggerJsdoc(options);
